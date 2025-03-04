@@ -9,9 +9,9 @@ export default async function handler(request: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${btoa(
+        'Authorization': `Basic ${Buffer.from(
             `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
-        )}`
+        ).toString('base64')}`
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
@@ -28,8 +28,15 @@ export default async function handler(request: Request) {
       }
     });
 
+    // No song currently playing
     if (response.status === 204) {
-      return new Response(JSON.stringify({ isPlaying: false }), {
+      return new Response(JSON.stringify({
+        isPlaying: false,
+        title: '',
+        artist: '',
+        album: '',
+        coverArt: ''
+      }), {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
@@ -42,7 +49,7 @@ export default async function handler(request: Request) {
     return new Response(JSON.stringify({
       isPlaying: data.is_playing,
       title: data.item?.name || '',
-      artist: data.item?.artists[0]?.name || '',
+      artist: data.item?.artists?.[0]?.name || '',
       album: data.item?.album?.name || '',
       coverArt: data.item?.album?.images?.[0]?.url || ''
     }), {
@@ -52,7 +59,14 @@ export default async function handler(request: Request) {
       }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error fetching song' }), {
+    return new Response(JSON.stringify({
+      error: 'Error fetching song',
+      isPlaying: false,
+      title: '',
+      artist: '',
+      album: '',
+      coverArt: ''
+    }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
