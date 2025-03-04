@@ -45,7 +45,7 @@ export default async function handler(request: Request) {
       title: data.item?.name || '',
       artist: data.item?.artists[0]?.name || '',
       albumName:data?.item?.album?.name,
-      coverArt: data?.item?.album?.images[0],
+      coverArt: data?.item?.album?.images[0]?.url,
     }), {
       headers: {
         'Content-Type': 'application/json',
