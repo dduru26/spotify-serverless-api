@@ -38,6 +38,7 @@ export default async function handler(request: Request) {
     }
 
     const data = await response.json();
+    console.log(data)
 
     return new Response(JSON.stringify({
       isPlaying: data.is_playing,
