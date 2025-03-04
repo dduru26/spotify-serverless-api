@@ -43,7 +43,9 @@ export default async function handler(request: Request) {
     return new Response(JSON.stringify({
       isPlaying: data.is_playing,
       title: data.item?.name || '',
-      artist: data.item?.artists[0]?.name || ''
+      artist: data.item?.artists[0]?.name || '',
+      albumName:data?.item?.album?.name,
+      coverArt: data?.item?.album?.images[0],
     }), {
       headers: {
         'Content-Type': 'application/json',
